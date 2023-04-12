@@ -13,36 +13,31 @@ CHOICES = (
 
 
 class CustomUser(AbstractUser):
-    login = models.CharField(
+    username = models.CharField(
         verbose_name='Логин',
         max_length=200,
-        blank=True,
         unique=True,
         help_text='Укажите имя пользователя',
     )
     password = models.CharField(
         verbose_name=('Пароль'),
-        max_length=50,
-        blank=True,
+        max_length=150,
         help_text='Придумайте пароль',
     )
     email = models.EmailField(
         verbose_name='Электронная почта',
         max_length=200,
-        blank=False,
         unique=True,
         help_text='Укажите электронную почту'
     )
     first_name = models.CharField(
         verbose_name='Имя пользователя',
         max_length=200,
-        blank=True,
         help_text='Укажите своё имя',
     )
     last_name = models.CharField(
         verbose_name='Фамилия пользователя',
         max_length=200,
-        blank=True,
         help_text='Укажите свою фамилию',
     )
     registered = models.DateTimeField(
