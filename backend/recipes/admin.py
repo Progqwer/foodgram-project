@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Recipe, Tag, Ingredients
+from .models import Recipe, Tag, Ingredient
 
 
 class RecipeIngredientsInLine(admin.TabularInline):
@@ -19,8 +19,11 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author')
     inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
 
+    def added_in_favorite(self, obj):
+        return obj.favorites.count()
 
-@admin.register(Ingredients)
+
+@admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     search_fields = ('name',)

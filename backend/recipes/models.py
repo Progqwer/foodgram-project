@@ -1,11 +1,16 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils.html import format_html
+from colorfield.fields import ColorField
 
 from users.models import CustomUser
 
+COLOR_PALETTE = [
+ ("#FFFFFF", "white", ),
+ ("#000000", "black", ),
+ ]
 
-class Ingredients(models.Model):
+
+class Ingredient(models.Model):
     name = models.CharField(
         max_length=200,
         verbose_name='Название ингредиента',
@@ -21,6 +26,7 @@ class Ingredients(models.Model):
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ('name',)
 
         constraints = (
             models.UniqueConstraint(
@@ -39,11 +45,10 @@ class Tag(models.Model):
         verbose_name='Название тега',
         unique=True
     )
-    color = models.CharField(
-        max_length=7,
-        default="#ffffff",
+    color = ColorField(
+        samples=COLOR_PALETTE,
         verbose_name='Цвет тега',
-        help_text='Цвет тега'
+        help_text='Цвет тега',
     )
     slug = models.SlugField(
         max_length=200,
@@ -55,12 +60,6 @@ class Tag(models.Model):
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
-
-    def colored_name(self):
-        return format_html(
-            '<span style="color: #{};">{}</span>',
-            self.color,
-        )
 
     def __str__(self):
         return self.name
@@ -75,8 +74,8 @@ class Recipe(models.Model):
         verbose_name='Рецепт'
     )
     ingredients = models.ManyToManyField(
-        Ingredients,
-        through='RecipeIngredients',
+        Ingredient,
+        through='RecipeIngredient',
         related_name='recipes',
         verbose_name='Игредиенты для рецепта',
         help_text='Игредиенты для рецепта',
@@ -138,14 +137,14 @@ class RecipeTags(models.Model):
         return f'У рецепта {self.recipe} есть тег {self.tag}'
 
 
-class RecipeIngredients(models.Model):
+class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         verbose_name='Рецепт'
     )
     ingredient = models.ForeignKey(
-        Ingredients,
+        Ingredient,
         on_delete=models.PROTECT,
         verbose_name='Ингредиент'
     )
@@ -172,7 +171,7 @@ class FavoriteRecipe(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='in_favorite',
+        related_name='favorites',
         verbose_name='Рецепт'
     )
 

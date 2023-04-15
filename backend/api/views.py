@@ -2,23 +2,28 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import exceptions, filters, status, viewsets
+from rest_framework import exceptions, status, viewsets, filters
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from .filters import RecipeFilter
-from .models import (FavoriteRecipe, Ingredients, Recipe, RecipeIngredients,
-                     ShoppingCart, Tag)
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingCart, Tag)
 from .permissions import IsAuthorOrAdminPermission
-from .serializers import (IngredientSerializer, RecipeCreateUpdateSerializer,
-                          RecipeSerializer, ShortRecipeSerializer,
+from .serializers import (RecipeCreateUpdateSerializer,
+                          RecipeSerializer,
+                          ShortRecipeSerializer,
+                          IngredientSerializer,
                           TagSerializer)
-from users.pagination import CustomPageNumberPagination
+from .pagination import CustomPageNumberPagination
+from djoser.views import UserViewSet
+from users.models import CustomUser, Follow
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredients.objects.all()
+    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
@@ -71,7 +76,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     'Рецепта нет в избранном, либо он уже удален.'
                 )
 
-            favorite = get_object_or_404(FavoriteRecipe, user=user, recipe=recipe)
+            favorite = get_object_or_404(
+                FavoriteRecipe, user=user, recipe=recipe)
             favorite.delete()
 
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -128,7 +134,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         shopping_cart = ShoppingCart.objects.filter(user=self.request.user)
         recipes = [item.recipe.id for item in shopping_cart]
-        buy_list = RecipeIngredients.objects.filter(
+        buy_list = RecipeIngredient.objects.filter(
             recipe__in=recipes
         ).values(
             'ingredient'
@@ -138,7 +144,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         buy_list_text = 'Список покупок:\n\n'
         for item in buy_list:
-            ingredient = Ingredients.objects.get(pk=item['ingredient'])
+            ingredient = Ingredient.objects.get(pk=item['ingredient'])
             amount = item['amount']
             buy_list_text += (
                 f'{ingredient.name}, {amount} '
@@ -151,3 +157,59 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
         return response
+
+
+class CustomUserViewSet(UserViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def followers(self, request):
+        user = self.request.user
+        user_follows = user.follower.all()
+        authors = [item.author.id for item in user_follows]
+        queryset = CustomUser.objects.filter(pk__in=authors)
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(paginated_queryset, many=True)
+
+        return self.get_paginated_response(serializer.data)
+
+    def follow(self, request, id=None):
+        user = self.request.user
+        author = get_object_or_404(CustomUser, pk=id)
+
+        if self.request.method == 'POST':
+            if user == author:
+                raise exceptions.ValidationError(
+                    'Вы не можете подписаться на самого себя.'
+                )
+            if Follow.objects.filter(
+                user=user,
+                author=author
+            ).exists():
+                raise exceptions.ValidationError(
+                    'Вы уже подписанны на данного пользователя.'
+                )
+
+            Follow.objects.create(user=user, author=author)
+            serializer = self.get_serializer(author)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if self.request.method == 'DELETE':
+            if not Follow.objects.filter(
+                user=user,
+                author=author
+            ).exists():
+                raise exceptions.ValidationError(
+                    'Вы и так не подписанны на данного пользователя.'
+                )
+
+            following = get_object_or_404(
+                Follow,
+                user=user,
+                author=author
+            )
+            following.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)

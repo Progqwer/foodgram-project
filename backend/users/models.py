@@ -1,16 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-USER = 'user'
-
-CHOICES = (
-    (ADMIN, ADMIN),
-    (MODERATOR, MODERATOR),
-    (USER, USER),
-)
-
 
 class CustomUser(AbstractUser):
     username = models.CharField(
@@ -44,27 +34,11 @@ class CustomUser(AbstractUser):
         verbose_name='Дата регистрации',
         auto_now_add=True,
     )
-    role = models.CharField(
-        verbose_name='Статус пользователя',
-        max_length=20,
-        choices=CHOICES,
-        default=USER
-    )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
-    @property
-    def is_admin(self):
-        return (
-            self.role == ADMIN or self.is_staff
-            or self.is_superuser
-        )
-
-    @property
-    def is_moderator(self):
-        return self.role == MODERATOR
 
     def __str__(self):
         return self.username
@@ -85,6 +59,7 @@ class Follow(models.Model):
     )
 
     class Meta:
+        ordering = ('id',)
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = (

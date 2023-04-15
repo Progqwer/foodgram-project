@@ -2,7 +2,7 @@ from distutils.util import strtobool
 
 from django_filters import rest_framework
 
-from .models import FavoriteRecipe, Recipe, ShoppingCart, Tag
+from recipes.models import FavoriteRecipe, Recipe, ShoppingCart, Tag
 
 CHOICES_LIST = (
     ('0', 'False'),
