@@ -1,13 +1,22 @@
 from distutils.util import strtobool
+import django_filters
 
 from django_filters import rest_framework
 
 from recipes.models import FavoriteRecipe, Recipe, ShoppingCart, Tag
-
+from recipes.models import Ingredient
 CHOICES_LIST = (
     ('0', 'False'),
     ('1', 'True')
 )
+
+
+class IndigrientFilters(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_expr='startswith')
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
 
 
 class RecipeFilter(rest_framework.FilterSet):
@@ -57,4 +66,4 @@ class RecipeFilter(rest_framework.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ('author', 'tags')
+        fields = ('author', 'tags',)

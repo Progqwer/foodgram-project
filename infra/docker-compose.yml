@@ -14,7 +14,7 @@ services:
   frontend:
     build: ../frontend
     volumes:
-      - ../frontend:/app/result_build/
+      - ../frontend:/backend/result_build/
 
   backend:
     build:

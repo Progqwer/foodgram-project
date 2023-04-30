@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
+from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import exceptions, serializers
 
@@ -113,6 +114,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField()
+    image = Base64ImageField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
@@ -140,6 +142,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
         exclude = ('pub_date',)
 
 
@@ -150,7 +153,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         many=True
     )
     ingredients = RecipeIngredientUpdateSerializer(many=True)
-    image = serializers.ImageField(required=False)
+    image = Base64ImageField()
     cooking_time = serializers.IntegerField(
         validators=(
             MinValueValidator(
@@ -165,7 +168,13 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             raise exceptions.ValidationError(
                 'Нужно добавить хотя бы один тег.'
             )
-
+        tags_list = []
+        for tag in value:
+            if tag in tags_list:
+                raise exceptions.ValidationError(
+                    'Такой тег уже существует'
+                )
+            tags_list.append(tag)
         return value
 
     def validate_ingredients(self, value):
@@ -183,12 +192,23 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
         return value
 
+    @staticmethod
+    def validate_cooking_time(value):
+        if value <= 0:
+            raise exceptions.ValidationError(
+                'Время приготовления должно быть больше нуля!'
+            )
+        return value
+
     def create(self, validated_data):
         author = self.context.get('request').user
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
+        image = validated_data.pop('image')
 
-        recipe = Recipe.objects.create(author=author, **validated_data)
+        recipe = Recipe.objects.create(
+            author=author, image=image, **validated_data
+        )
         recipe.tags.set(tags)
 
         for ingredient in ingredients:
