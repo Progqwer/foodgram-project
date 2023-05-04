@@ -5,9 +5,9 @@ from django.db import models
 from users.models import CustomUser
 
 COLOR_PALETTE = [
- ("#FFFFFF", "white", ),
- ("#000000", "black", ),
- ]
+    ("#FFFFFF", "white", ),
+    ("#000000", "black", ),
+]
 
 
 class Ingredient(models.Model):
