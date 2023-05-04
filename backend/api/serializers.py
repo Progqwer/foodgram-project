@@ -43,21 +43,13 @@ class FollowSerializer(CustomUserSerializer):
     recipes_count = serializers.SerializerMethodField()
 
     def get_recipes(self, obj):
-        author_recipes = Recipe.objects.filter(author=obj)
-
-        if 'recipes_limit' in self.context.get('request').GET:
-            recipes_limit = self.context.get('request').GET['recipes_limit']
-            author_recipes = author_recipes[:int(recipes_limit)]
-
-        if author_recipes:
-            serializer = self.get_srs()(
-                author_recipes,
-                context={'request': self.context.get('request')},
-                many=True
-            )
-            return serializer.data
-
-        return []
+        request = self.context.get('request')
+        limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if limit:
+            recipes = recipes[:int(limit)]
+        serializer = ShortRecipeSerializer(recipes, many=True, read_only=True)
+        return serializer.data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
@@ -142,7 +134,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
+
         exclude = ('pub_date',)
 
 
@@ -259,7 +251,13 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
-        fields = ('id', 'name', 'image', 'cooking_time')
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time'
+        )

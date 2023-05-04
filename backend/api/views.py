@@ -17,7 +17,8 @@ from .serializers import (RecipeCreateUpdateSerializer,
                           ShortRecipeSerializer,
                           IngredientSerializer,
                           TagSerializer,
-                          CustomUserSerializer)
+                          CustomUserSerializer,
+                          FollowSerializer)
 from .pagination import CustomPageNumberPagination
 from djoser.views import UserViewSet
 from users.models import CustomUser, Follow
@@ -39,7 +40,6 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    print(queryset)
     permission_classes = (IsAuthorOrAdminPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
@@ -169,17 +169,25 @@ class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
     pagination_class = CustomPageNumberPagination
 
-    def followers(self, request):
-        user = self.request.user
-        user_follows = user.follower.all()
-        authors = [item.author.id for item in user_follows]
-        queryset = CustomUser.objects.filter(pk__in=authors)
-        paginated_queryset = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(paginated_queryset, many=True)
-
+    @action(
+        detail=False,
+        permission_classes=[IsAuthenticated]
+    )
+    def subscriptions(self, request):
+        user = request.user
+        queryset = CustomUser.objects.filter(following__user=user)
+        pages = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(pages,
+                                      many=True,
+                                      context={'request': request})
         return self.get_paginated_response(serializer.data)
 
-    def follow(self, request, id=None):
+    @action(
+        detail=True,
+        methods=['post', 'delete'],
+        permission_classes=[IsAuthenticated]
+    )
+    def subscribe(self, request, id=None):
         user = self.request.user
         author = get_object_or_404(CustomUser, pk=id)
 
