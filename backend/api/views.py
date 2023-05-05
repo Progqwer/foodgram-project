@@ -9,15 +9,30 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
+from .filters import IndigrientFilters, RecipeFilter
 from .pagination import CustomPageNumberPagination
-from .permissions import IsAuthorOrAdminPermission
+from .permissions import IsAdminOrReadOnly, IsAuthorOrAdminPermission
 from .serializers import (CustomUserSerializer, FollowSerializer,
-                          RecipeCreateUpdateSerializer, RecipeSerializer,
-                          ShortRecipeSerializer)
+                          IngredientSerializer, RecipeCreateUpdateSerializer,
+                          RecipeSerializer, ShortRecipeSerializer,
+                          TagSerializer)
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingCart)
+                            RecipeIngredient, ShoppingCart, Tag)
 from users.models import CustomUser, Follow
+
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = IndigrientFilters
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
