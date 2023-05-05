@@ -24,20 +24,6 @@ from djoser.views import UserViewSet
 from users.models import CustomUser, Follow
 
 
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
-    serializer_class = IngredientSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,)
-    filterset_class = IndigrientFilters
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    permission_classes = (IsAdminOrReadOnly,)
-
-
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (IsAuthorOrAdminPermission,)
@@ -71,7 +57,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif self.request.method == 'DELETE':
+        else:
             if not FavoriteRecipe.objects.filter(
                 user=user,
                 recipe=recipe
@@ -110,7 +96,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif self.request.method == 'DELETE':
+        else:
             if not ShoppingCart.objects.filter(
                 user=user,
                 recipe=recipe
@@ -209,7 +195,7 @@ class CustomUserViewSet(UserViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif self.request.method == 'DELETE':
+        else:
             if not Follow.objects.filter(
                 user=user,
                 author=author
