@@ -8,15 +8,13 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
-from .filters import RecipeFilter, IndigrientFilters
+from .filters import RecipeFilter
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            RecipeIngredient, ShoppingCart, Tag)
-from .permissions import IsAuthorOrAdminPermission, IsAdminOrReadOnly
+                            RecipeIngredient, ShoppingCart)
+from .permissions import IsAuthorOrAdminPermission
 from .serializers import (RecipeCreateUpdateSerializer,
                           RecipeSerializer,
                           ShortRecipeSerializer,
-                          IngredientSerializer,
-                          TagSerializer,
                           CustomUserSerializer,
                           FollowSerializer)
 from .pagination import CustomPageNumberPagination
