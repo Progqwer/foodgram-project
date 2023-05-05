@@ -1,15 +1,11 @@
 from django.core.validators import MinValueValidator
 from django.shortcuts import get_object_or_404
-from drf_extra_fields.fields import Base64ImageField
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import exceptions, serializers
 
-from recipes.models import (FavoriteRecipe,
-                            Ingredient,
-                            Recipe,
-                            RecipeIngredient,
-                            ShoppingCart,
-                            Tag)
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingCart, Tag)
 from users.models import CustomUser, Follow
 
 

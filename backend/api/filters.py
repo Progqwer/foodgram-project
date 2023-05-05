@@ -1,9 +1,10 @@
 from distutils.util import strtobool
-import django_filters
 
+import django_filters
 from django_filters import rest_framework
 
-from recipes.models import FavoriteRecipe, Recipe, ShoppingCart, Tag, Ingredient
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe, ShoppingCart,
+                            Tag)
 
 CHOICES_LIST = (
     ('0', 'False'),

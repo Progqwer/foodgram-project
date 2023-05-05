@@ -2,6 +2,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
@@ -9,16 +10,13 @@ from rest_framework.permissions import (IsAuthenticated,
 from rest_framework.response import Response
 
 from .filters import RecipeFilter
+from .pagination import CustomPageNumberPagination
+from .permissions import IsAuthorOrAdminPermission
+from .serializers import (CustomUserSerializer, FollowSerializer,
+                          RecipeCreateUpdateSerializer, RecipeSerializer,
+                          ShortRecipeSerializer)
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart)
-from .permissions import IsAuthorOrAdminPermission
-from .serializers import (RecipeCreateUpdateSerializer,
-                          RecipeSerializer,
-                          ShortRecipeSerializer,
-                          CustomUserSerializer,
-                          FollowSerializer)
-from .pagination import CustomPageNumberPagination
-from djoser.views import UserViewSet
 from users.models import CustomUser, Follow
 
 
