@@ -3,8 +3,8 @@ import django_filters
 
 from django_filters import rest_framework
 
-from recipes.models import FavoriteRecipe, Recipe, ShoppingCart, Tag
-from recipes.models import Ingredient
+from recipes.models import FavoriteRecipe, Recipe, ShoppingCart, Tag, Ingredient
+
 CHOICES_LIST = (
     ('0', 'False'),
     ('1', 'True')

@@ -20,14 +20,23 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
+<<<<<<< Updated upstream
           python -m pip install --upgrade pip
           pip install flake8
+=======
+          python -m pip install --upgrade pip 
+          pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+>>>>>>> Stashed changes
           cd backend/
           pip install -r requirements.txt
-      - name: Test with flake8
+      - name: Test  flake8
         run: |
+<<<<<<< Updated upstream
           cd backend
           flake8 .
+=======
+          python -m flake8 backend
+>>>>>>> Stashed changes
   build_and_push_backend_to_docker_hub:
     name: Pushing backend image to Docker Hub
     runs-on: ubuntu-latest
@@ -65,7 +74,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+<<<<<<< Updated upstream
               sudo docker pull progqwer/final:latest
+=======
+              sudo docker pull progqwer/foodgram-backend:latest
+>>>>>>> Stashed changes
               sudo docker-compose stop
               sudo docker-compose rm web
               touch .env
@@ -75,4 +88,8 @@ jobs:
               echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
               echo DB_HOST=${{ secrets.DB_HOST }} >> .env
               echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+<<<<<<< Updated upstream
               sudo docker-compose up -d --build
+=======
+              sudo docker-compose up -d --build
+>>>>>>> Stashed changes
