@@ -118,3 +118,5 @@ ip сервера: 84.201.178.33
  
 [![Django-app workflow](https://github.com/Progqwer/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)](https://github.com/Progqwer/yamdb_final/actions/workflows/yamdb_workflow.yml)
 
+## ff
+

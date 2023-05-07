@@ -86,6 +86,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+              cd /home/progqwer1/foodgram-project-react
               sudo docker pull progqwer/foodgram-backend:latest
               sudo docker-compose down
               pwd
