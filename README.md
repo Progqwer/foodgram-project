@@ -101,12 +101,11 @@ python manage.py csv_download
 
 ### Шаблон наполнения .env (не включен в репозиторий) расположенный по пути infra/.env
 ```bash
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER=postgres
+POSTGRES_USER=foodgram_db
 POSTGRES_PASSWORD=postgres
-DB_HOST=db
-DB_PORT=5432
+POSTGRES_DB=foodgram_db
+DEBUG=False
+DJANGO_ALLOWED_HOSTS=['*']
 ```
 
 ## Авторы:
