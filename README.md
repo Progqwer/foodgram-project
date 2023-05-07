@@ -1,12 +1,15 @@
-# praktikum_new_diplom
-Проект YaMDb собирает отзывы пользователей на произведения.
-Произведения делятся на категории, такие как «Книги», «Фильмы», «Музыка». Список категорий может быть расширен.
+## Проект Foodgram
 
-Добавлять произведения, категории и жанры может только администратор.
+ip сервера: http://84.201.177.135/
 
-Благодарные или возмущённые пользователи оставляют к произведениям текстовые отзывы и ставят произведению оценку в диапазоне от одного до десяти (целое число); из пользовательских оценок формируется усреднённая оценка произведения — рейтинг (целое число). На одно произведение пользователь может оставить только один отзыв.
 
-Пользователи могут оставлять комментарии к отзывам.
+Foodgram - продуктовый помощник с базой кулинарных рецептов. Позволяет публиковать рецепты, сохранять избранные, а также формировать список покупок для выбранных рецептов. Можно подписываться на любимых авторов.
+
+Проект доступен по [адресу](https://foodgramproject.ru)
+
+Документация к API доступна [здесь](https://foodgramproject.ru/api/docs/)
+
+В документации описаны возможные запросы к API и структура ожидаемых ответов. Для каждого запроса указаны уровни прав доступа.
 
 
 ## Тeхнологии проуктa
@@ -17,52 +20,49 @@
 - Djangorestframework-simplejwt 5.2.2
 - PyJWT                         2.1.0
 
-## Запуск проекта
+## Запуск проекта локлаьно
 
-- Создание виртуального окружения
-```
-python -m venv venv
-```
-
-- Активация виртуального окружения
-
-- Установка зависимостей
-```
-pip install -r requirements.txt
-```
-
-- Перейти в директорию api_yamdb
-```
-cd api_yamdb
-```
-- Выполнить миграции
-```
-python manage.py makemigrations
-
-python manage.py migrate
-```
-
-- Запуск локального сервера
-```
-python manage.py runserver
-```
-
-
-
-
-## Загрузка данных из csv
-
-Перейти в директорию api_yamdb
+- Клонировать репозиторий:
 
 ```
-cd api_yamdb
+https://github.com/Progqwer/foodgram-project-react.git
 ```
 
-Запустить зазгрузку данных из csv
+- Перейти в директорию infra
+```
+cd infrta
+```
+- Создать и запустить контейнеры Docker, выполнить команду
+```
+ docker compose up -d --build
+```
 
+- После успешной сборки выполнить миграции:
 ```
-python manage.py csv_download
+ docker compose exec backend python manage.py migrate
 ```
+
+- Собрать статику:
+```
+ docker compose exec backend python manage.py collectstatic --noinput
+```
+
+- Наполнить базу данных:
+```
+docker-compose exec backend python manage.py csv_download --path data/
+```
+
+- Создать суперпользователя:
+```
+sudo docker compose exec backend python manage.py createsuperuser
+```
+
+- Для остановки контейнеров Docker:
+```
+sudo docker compose down         # останорвить и удалить контейнеры
+sudo docker compose stop         # останорвить контейнеры
+```
+
 
 ### Настройка проекта для развертывания на удаленном сервере
 
@@ -95,8 +95,6 @@ python manage.py csv_download
     PASSPHRASE=пароль для сервера, если он установлен
     SSH_KEY=ваш SSH ключ (для получения команда: cat ~/.ssh/id_rsa - копировать с текстом)
 
-    TELEGRAM_TO=ID чата, в который придет сообщение
-    TELEGRAM_TOKEN=токен вашего бота
 ```
 
 ### Шаблон наполнения .env (не включен в репозиторий) расположенный по пути infra/.env
@@ -108,14 +106,40 @@ DEBUG=False
 DJANGO_ALLOWED_HOSTS=['*']
 ```
 
+- Скопировать на сервер файлы docker-compose.yml, nginx.conf из папки infra (команды выполнять находясь в папке infra):
+
+```
+scp docker-compose.yml nginx.conf username@IP:/home/username/   # username - имя пользователя на сервере
+                                                                # IP - публичный IP сервера
+
+
+ - Создать и запустить контейнеры Docker, выполнить команду на сервере
+```
+sudo docker compose up -d
+```                          
+
+- После успешной сборки выполнить миграции:
+```
+sudo docker compose exec backend python manage.py migrate
+```
+
+- Создать суперпользователя:
+```
+sudo docker compose exec backend python manage.py createsuperuser
+```
+
+- Собрать статику:
+```
+sudo docker compose exec backend python manage.py collectstatic --noinput
+```
+
+- Наполнить базу данных:
+```
+sudo docker-compose exec backend python manage.py csv_download --path data/
+```
 ## Авторы:
-- Книженцев Иван
 - Цыганков Илья
-- Тамерлан Салим
-
-ip сервера: 84.201.178.33
  
-[![Django-app workflow](https://github.com/Progqwer/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)](https://github.com/Progqwer/yamdb_final/actions/workflows/yamdb_workflow.yml)
+[![Django-app workflow](https://github.com/Progqwer/foodgram-project-react/actions/workflows/foodgram-project-react-workflow.yml/badge.svg)](https://github.com/Progqwer/foodgram-project-react/actions/workflows/foodgram-project-react-workflow.yml)
 
-## ff
 
