@@ -169,7 +169,6 @@ class CustomUserViewSet(UserViewSet):
         if self.action in ('list', 'retrieve'):
             return CustomUserSerializer
         return CustomUserCreateSerializer
-        
 
     @action(
         detail=False,
