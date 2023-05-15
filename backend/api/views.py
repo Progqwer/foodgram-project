@@ -96,7 +96,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 recipe=recipe
             ).exists():
                 raise exceptions.ValidationError(
-                    'Рецепт уже в списке покупок.'
+                    'Рецепт уже находится в списке покупок.'
                 )
 
             ShoppingCart.objects.create(user=user, recipe=recipe)
