@@ -10,9 +10,9 @@ from users.models import CustomUser, Follow
 
 
 class CustomUserSerializer(UserSerializer):
-    is_following = serializers.SerializerMethodField()
+    is_subscribed = serializers.SerializerMethodField()
 
-    def get_is_following(self, obj):
+    def get_is_subscribed(self, obj):
         user = self.context['request'].user
 
         if user.is_anonymous:
@@ -23,7 +23,7 @@ class CustomUserSerializer(UserSerializer):
     class Meta:
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'is_following', 'registered')
+                  'is_subscribed', 'registered')
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -53,7 +53,7 @@ class FollowSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'is_following', 'recipes', 'recipes_count')
+                  'is_subscribed', 'recipes', 'recipes_count')
 
 
 class IngredientSerializer(serializers.ModelSerializer):

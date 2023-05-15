@@ -12,10 +12,10 @@ from rest_framework.response import Response
 from .filters import IndigrientFilters, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrAdminPermission
-from .serializers import (CustomUserCreateSerializer, CustomUserSerializer,
-                          FollowSerializer, IngredientSerializer,
-                          RecipeCreateUpdateSerializer, RecipeSerializer,
-                          ShortRecipeSerializer, TagSerializer)
+from .serializers import (CustomUserSerializer, FollowSerializer,
+                          IngredientSerializer, RecipeCreateUpdateSerializer,
+                          RecipeSerializer, ShortRecipeSerializer,
+                          TagSerializer, CustomUserCreateSerializer)
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
 from users.models import CustomUser, Follow
@@ -187,7 +187,6 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=['post', 'delete'],
-        serializer_class=FollowSerializer,
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id=None):
