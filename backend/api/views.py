@@ -12,10 +12,10 @@ from rest_framework.response import Response
 from .filters import IndigrientFilters, RecipeFilter
 from .pagination import CustomPageNumberPagination
 from .permissions import IsAdminOrReadOnly, IsAuthorOrAdminPermission
-from .serializers import (CustomUserSerializer, FollowSerializer,
-                          IngredientSerializer, RecipeCreateUpdateSerializer,
-                          RecipeSerializer, ShortRecipeSerializer,
-                          TagSerializer, CustomUserCreateSerializer)
+from .serializers import (CustomUserCreateSerializer, CustomUserSerializer,
+                          FollowSerializer, IngredientSerializer,
+                          RecipeCreateUpdateSerializer, RecipeSerializer,
+                          ShortRecipeSerializer, TagSerializer)
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
 from users.models import CustomUser, Follow
