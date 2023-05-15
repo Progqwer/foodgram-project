@@ -174,7 +174,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = CustomUser.objects.filter(following__user=user)
-        pages = CustomPageNumberPagination(queryset)
+        pages = self.paginate_queryset(queryset)
         serializer = FollowSerializer(pages,
                                       many=True,
                                       context={'request': request})
