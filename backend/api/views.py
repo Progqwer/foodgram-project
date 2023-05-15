@@ -182,6 +182,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=['post', 'delete'],
+        serializer_class=FollowSerializer,
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id=None):
