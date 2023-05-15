@@ -15,7 +15,7 @@ from .permissions import IsAdminOrReadOnly, IsAuthorOrAdminPermission
 from .serializers import (CustomUserSerializer, FollowSerializer,
                           IngredientSerializer, RecipeCreateUpdateSerializer,
                           RecipeSerializer, ShortRecipeSerializer,
-                          TagSerializer)
+                          TagSerializer, CustomUserCreateSerializer)
 from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             RecipeIngredient, ShoppingCart, Tag)
 from users.models import CustomUser, Follow
@@ -166,7 +166,10 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
-        return CustomUserSerializer
+        if self.action in ('list', 'retrieve'):
+            return CustomUserSerializer
+        return CustomUserCreateSerializer
+        
 
     @action(
         detail=False,
