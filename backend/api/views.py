@@ -173,8 +173,8 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = request.user
         queryset = CustomUser.objects.filter(following__user=user)
-        pages = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(pages,
+        paginated_queryset = self.paginate_queryset(queryset)
+        serializer = FollowSerializer(paginated_queryset,
                                       many=True,
                                       context={'request': request})
         return self.get_paginated_response(serializer.data)
@@ -182,6 +182,7 @@ class CustomUserViewSet(UserViewSet):
     @action(
         detail=True,
         methods=['post', 'delete'],
+        serializer_class=FollowSerializer,
         permission_classes=[IsAuthenticated]
     )
     def subscribe(self, request, id=None):

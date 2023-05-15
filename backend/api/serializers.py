@@ -53,7 +53,7 @@ class FollowSerializer(CustomUserSerializer):
     class Meta:
         model = CustomUser
         fields = ('id', 'username', 'first_name', 'last_name', 'email',
-                  'is_following', 'recipes', 'recipes_count')
+                  'is_subscribed', 'recipes', 'recipes_count')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
