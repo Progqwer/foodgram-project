@@ -4,10 +4,14 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
                      ShoppingCart, Tag)
 
 
-class RecipeIngredientsInline(admin.TabularInline):
+class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
 
+
+class RecipeTagsInLine(admin.TabularInline):
+    model = Recipe.tags.through
+    extra = 1
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
@@ -18,7 +22,7 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ['added_in_favorites']
     list_filter = ['name', 'pub_date', 'author', 'tags']
     empty_value_display = '-empty-'
-    inlines = [RecipeIngredientsInline]
+    inlines = (RecipeIngredientInline, RecipeTagsInLine)
 
     def added_in_favorites(self, obj):
         return obj.favorites.count()
@@ -35,7 +39,7 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ['pk', 'name', 'measurement_unit']
     search_fields = ['name', 'measurement_unit']
     list_filter = ['name', 'measurement_unit']
-    inlines = [RecipeIngredientsInline]
+    inlines = (RecipeIngredientInline)
 
 
 @admin.register(RecipeIngredient)
