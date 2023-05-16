@@ -6,14 +6,12 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
 
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
-    extra = 1
     min_num = 1
 
 
 class RecipeTagsInLine(admin.TabularInline):
     model = Recipe.tags.through
-    extra = 1
-    max_num = 1
+    min_num = 1
 
 
 @admin.register(Recipe)
