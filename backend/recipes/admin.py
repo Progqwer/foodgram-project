@@ -7,11 +7,13 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
 class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     min_num = 1
+    max_num = 100
 
 
 class RecipeTagsInLine(admin.TabularInline):
     model = Recipe.tags.through
     min_num = 1
+    max_num = 10
 
 
 @admin.register(Recipe)
