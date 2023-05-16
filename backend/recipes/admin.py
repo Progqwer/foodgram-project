@@ -1,36 +1,40 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag
-
-
-class RecipeIngredientsInLine(admin.TabularInline):
-    model = Recipe.ingredients.through
-    extra = 1
-
-
-class RecipeTagsInLine(admin.TabularInline):
-    model = Recipe.tags.through
-    extra = 1
+from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingCart, Tag)
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'text', 'pub_date', 'author')
-    search_fields = ('name', 'author')
-    inlines = (RecipeIngredientsInLine, RecipeTagsInLine)
+    list_display = ('name', 'id', 'author', 'added_in_favorites')
+    readonly_fields = ('added_in_favorites',)
+    list_filter = ('author', 'name', 'tags',)
 
-    def added_in_favorite(self, obj):
+    def added_in_favorites(self, obj):
         return obj.favorites.count()
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
-    search_fields = ('name',)
+    list_display = ('name', 'measurement_unit',)
+    list_filter = ('name',)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'color', 'slug')
-    search_fields = ('name',)
-    prepopulated_fields = {'slug': ('name',)}
+    list_display = ('name', 'color', 'slug',)
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+
+
+@admin.register(FavoriteRecipe)
+class FavoriteRecipeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+
+
+@admin.register(RecipeIngredient)
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    list_display = ('recipe', 'ingredient', 'amount',)
