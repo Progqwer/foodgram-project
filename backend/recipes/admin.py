@@ -13,6 +13,7 @@ class RecipeTagsInLine(admin.TabularInline):
     model = Recipe.tags.through
     extra = 1
 
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = [
